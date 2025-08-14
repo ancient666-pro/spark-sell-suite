@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Bot, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-bg.jpg";
 
 export function HeroSection() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <section className="relative min-h-screen flex items-center justify-center particle-bg overflow-hidden">
       {/* Background Image with Overlay */}
@@ -45,11 +49,20 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Button size="lg" className="btn-primary px-8 py-4 text-lg font-semibold">
+            <Button 
+              size="lg" 
+              className="btn-primary px-8 py-4 text-lg font-semibold"
+              onClick={() => navigate(user ? '/sell' : '/auth')}
+            >
               Start Selling
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="btn-ghost px-8 py-4 text-lg">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="btn-ghost px-8 py-4 text-lg"
+              onClick={() => navigate('/marketplace')}
+            >
               Explore Marketplace
             </Button>
           </div>

@@ -1,6 +1,7 @@
 import { ProductCard } from "@/components/ui/product-card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const featuredProducts = [
   {
@@ -62,6 +63,7 @@ const featuredProducts = [
 ];
 
 export function FeaturedProducts() {
+  const navigate = useNavigate();
   return (
     <section className="py-20 bg-surface">
       <div className="container mx-auto px-4 lg:px-8">
@@ -96,7 +98,11 @@ export function FeaturedProducts() {
 
         {/* View All Button */}
         <div className="text-center">
-          <Button size="lg" className="btn-primary px-8">
+          <Button 
+            size="lg" 
+            className="btn-primary px-8"
+            onClick={() => navigate('/marketplace')}
+          >
             View All Products
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

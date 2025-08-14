@@ -1,10 +1,15 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart, Search, User, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Search, Menu, ShoppingCart, User, LogOut, Settings, Plus, X } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -21,12 +26,11 @@ export function Navigation() {
             <Link to="/marketplace" className="text-foreground hover:text-primary transition-colors">
               Marketplace
             </Link>
-            <Link to="/sell" className="text-foreground hover:text-primary transition-colors">
-              Sell
-            </Link>
-            <Link to="/categories" className="text-foreground hover:text-primary transition-colors">
-              Categories
-            </Link>
+            {user && (
+              <Link to="/sell" className="text-foreground hover:text-primary transition-colors">
+                Sell
+              </Link>
+            )}
           </div>
 
           {/* Search Bar */}
@@ -43,15 +47,61 @@ export function Navigation() {
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="hover-glow">
-              <ShoppingCart className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="hover-glow">
-              <User className="h-5 w-5" />
-            </Button>
-            <Button className="btn-primary px-6">
-              Sign In
-            </Button>
+            {user && (
+              <Button variant="ghost" size="icon" className="hover-glow">
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
+            )}
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={profile?.avatar_url} />
+                      <AvatarFallback>
+                        {profile?.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      {profile?.full_name && (
+                        <p className="font-medium">{profile.full_name}</p>
+                      )}
+                      <p className="w-[200px] truncate text-sm text-muted-foreground">
+                        {profile?.email}
+                      </p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/sell')}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Sell Product
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" onClick={() => navigate('/auth')}>
+                  Sign In
+                </Button>
+                <Button className="btn-primary" onClick={() => navigate('/auth')}>
+                  Get Started
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,31 +134,31 @@ export function Navigation() {
               >
                 Marketplace
               </Link>
-              <Link 
-                to="/sell" 
-                className="block py-2 px-4 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Sell
-              </Link>
-              <Link 
-                to="/categories" 
-                className="block py-2 px-4 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Categories
-              </Link>
+              {user && (
+                <Link 
+                  to="/sell" 
+                  className="block py-2 px-4 text-foreground hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sell
+                </Link>
+              )}
             </div>
             <div className="flex items-center space-x-4 px-4">
-              <Button variant="ghost" size="icon">
-                <ShoppingCart className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-              </Button>
-              <Button className="btn-primary flex-1">
-                Sign In
-              </Button>
+              {user ? (
+                <div className="flex items-center space-x-2 w-full">
+                  <Button variant="outline" className="flex-1" onClick={() => { navigate('/dashboard'); setIsOpen(false); }}>
+                    Dashboard
+                  </Button>
+                  <Button variant="ghost" onClick={() => { signOut(); setIsOpen(false); }}>
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button className="btn-primary w-full" onClick={() => { navigate('/auth'); setIsOpen(false); }}>
+                  Sign In
+                </Button>
+              )}
             </div>
           </div>
         )}
