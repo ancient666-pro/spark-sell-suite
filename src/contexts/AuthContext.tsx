@@ -91,7 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    const redirectUrl = `${window.location.origin}/auth/callback`;
+    // Use custom domain for redirect
+    const redirectUrl = 'https://alytix.in/auth/callback';
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -138,12 +139,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    const redirectUrl = `${window.location.origin}/auth/callback`;
+    // CHANGED: Use your custom domain instead of window.location.origin
+    const redirectUrl = 'https://alytix.in/auth/callback';
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectUrl
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
       }
     });
 
