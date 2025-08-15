@@ -13,5 +13,6 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    redirectTo: 'https://alytix.in/auth/callback',  // Added custom domain redirect
   }
 });
