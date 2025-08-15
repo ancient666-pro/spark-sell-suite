@@ -55,10 +55,19 @@ export default function Auth() {
     setIsLoading(false);
   };
 
+  // Updated Google Sign In handler with proper redirect
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    await signInWithGoogle();
-    setIsLoading(false);
+    
+    try {
+      // Call the signInWithGoogle from AuthContext
+      // The redirect URL should be handled in the AuthContext
+      await signInWithGoogle();
+    } catch (error) {
+      console.error('Google sign in error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
